@@ -1,3 +1,12 @@
+allwinner-profiles (0.2.3) unstable; urgency=medium
+
+  [ Feng Zhang ]
+  * feat: task-a733/a527-x11: add radxa-sddm-theme depends
+  * feat: task-a527-x11: add radxa-touchscreen-utils to Depends
+  * feat: add task-allwinner-xorg for allwinner common xorg support
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 15 Aug 2025 11:29:08 +0000
+
 allwinner-profiles (0.2.2) unstable; urgency=medium
 
   [ dependabot[bot] ]
