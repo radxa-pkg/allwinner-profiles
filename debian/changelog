@@ -1,3 +1,10 @@
+allwinner-profiles (0.2.4) unstable; urgency=medium
+
+  [ ZHANG Yuntian ]
+  * fix: broken package name
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 15 Aug 2025 18:12:52 +0000
+
 allwinner-profiles (0.2.3) unstable; urgency=medium
 
   [ Feng Zhang ]
