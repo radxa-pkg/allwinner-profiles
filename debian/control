@@ -9,6 +9,17 @@ Build-Depends: debhelper (>=12~),
                dh-exec,
                pandoc,
 
+Package: task-allwinner
+Architecture: all
+Priority: optional
+Depends: radxa-system-config-allwinner,
+         task-allwinner-chromium,
+         task-allwinner-sound,
+         ${misc:Depends},
+Description: Metapackage for common Allwinner vendor packages
+ This package provides prebuilt packages from Allwinner that
+ provides a more optimized user experience.
+
 Package: task-allwinner-chromium
 Architecture: all
 Priority: optional
@@ -56,10 +67,9 @@ Description: Metapackage for A527 X.Org support
 Package: task-a527
 Architecture: all
 Priority: optional
-Depends: task-allwinner-chromium,
+Depends: task-allwinner,
          task-a527-xorg,
          task-a527-vpu,
-         radxa-system-config-allwinner,
          ${misc:Depends},
 Description: Metapackage for common A527 vendor packages
  This package provides prebuilt packages from Allwinner that
@@ -86,9 +96,8 @@ Description: Metapackage for A733 X.Org support
 Package: task-a733
 Architecture: all
 Priority: optional
-Depends: task-allwinner-chromium,
+Depends: task-allwinner,
          task-a733-xorg,
-         radxa-system-config-allwinner,
          img-bxm-dkms,
          ${misc:Depends},
 Recommends: task-a733-vpu
