@@ -18,6 +18,14 @@ Provides: chromium,
 Description: Metapackage for Allwinner Chromium support
  This package provides Allwinner Chromium support.
 
+Package: task-allwinner-sound
+Architecture: all
+Priority: optional
+Depends: radxa-alsa-config,
+         ${misc:Depends},
+Description: Metapackage for Allwinner sound support
+ This package provides Allwinner sound support.
+
 Package: task-allwinner-xorg
 Architecture: all
 Priority: optional
