@@ -78,7 +78,7 @@ Description: Metapackage for common A527 vendor packages
 Package: task-a733-vpu
 Architecture: all
 Priority: optional
-Depends: libcedarc-dev-2.0.0-arm64.deb,
+Depends: libcedarc-dev-2.0.0-arm64 | libcedarc-dev-2.0.0-arm64.deb,
          libgstreamer-openmax-allwinner,
          ${misc:Depends},
 Description: Metapackage for A733 X.Org support
