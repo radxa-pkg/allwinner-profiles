@@ -1,3 +1,10 @@
+allwinner-profiles (0.2.6) unstable; urgency=medium
+
+  [ Jiali Chen ]
+  * feat: add metapackage task-a733-camera
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Mon, 27 Oct 2025 04:01:59 +0000
+
 allwinner-profiles (0.2.5) unstable; urgency=medium
 
   [ Jiali Chen ]
