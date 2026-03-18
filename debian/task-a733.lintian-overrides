@@ -1,0 +1,3 @@
+# /usr/bin/sddm-greeter-qt6 is a wapper for /usr/bin/sddm-greeter-qt6.bak, which is provided by sddm.
+# So we don't need to provide a manual page for it. 
+task-a733: no-manual-page
