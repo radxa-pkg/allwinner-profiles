@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export QSG_RHI_BACKEND="${QSG_RHI_BACKEND:-vulkan}"
+exec /usr/bin/sddm-greeter-qt6.bak "$@"

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+case $1 in
+install | upgrade)
+	# workaround command-with-path-in-maintainer-script for /usr/bin
+	conflicts="/usr/bin/sddm-greeter-qt6"
+	for i in $conflicts; do
+		dpkg-divert --package task-a733 --divert "$i.bak" --rename "$i"
+	done
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0
