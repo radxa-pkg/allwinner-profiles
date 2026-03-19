@@ -1,3 +1,17 @@
+allwinner-profiles (0.2.7) unstable; urgency=medium
+
+  [ CodeChenL ]
+  * feat: add pkg.conf.template
+
+  [ ZHANG Yuntian ]
+  * Update pkg.conf.template with new releases
+
+  [ Jiali Chen ]
+  * fix: a733: environment: add 99-vulkan_for_qt
+  * fix: a733: divert sddm-greeter-qt6
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Thu, 19 Mar 2026 11:26:58 +0000
+
 allwinner-profiles (0.2.6) unstable; urgency=medium
 
   [ Jiali Chen ]
