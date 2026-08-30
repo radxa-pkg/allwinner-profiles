@@ -15,6 +15,8 @@ Priority: optional
 Depends: radxa-system-config-allwinner,
          task-allwinner-chromium,
          task-allwinner-sound,
+         gstreamer1.0-tools,
+         v4l2-utils,
          ${misc:Depends},
 Description: Metapackage for common Allwinner vendor packages
  This package provides prebuilt packages from Allwinner that
