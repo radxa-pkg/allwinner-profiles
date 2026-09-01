@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="codec">
+  <id>org.radxa.gstreamer.openmax.allwinner</id>
+  <metadata_license>FSFAP</metadata_license>
+  <name>Allwinner GStreamer OpenMAX plugin</name>
+  <summary>Hardware-accelerated GStreamer multimedia support for Allwinner SoCs</summary>
+  <description>
+    <p>Provides the Allwinner OpenMAX plugin for GStreamer hardware-accelerated multimedia processing.</p>
+  </description>
+  <pkgname>libgstreamer-openmax-allwinner</pkgname>
+  <provides>
+    <modalias>of:NveT(null)Callwinner,sunxi-cedar-ve</modalias>
+    <modalias>of:Nve1T(null)Callwinner,sunxi-cedar-ve</modalias>
+  </provides>
+</component>
