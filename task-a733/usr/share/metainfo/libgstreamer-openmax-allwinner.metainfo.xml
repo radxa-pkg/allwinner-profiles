@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>org.allwinner.gstreamer-openmax</id>
+  <extends>org.gstreamer.gst-plugins-bad</extends>
+  <name>GStreamer OpenMAX plugins for Allwinner</name>
+  <summary>Hardware-accelerated multimedia codecs for Allwinner platforms</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LGPL-2.1+</project_license>
+  <url type="homepage">https://github.com/radxa/allwinner-debian</url>
+  <provides>
+    <modalias>of:NveT(null)Callwinner,sunxi-cedar-ve</modalias>
+    <modalias>of:Nve1T(null)Callwinner,sunxi-cedar-ve</modalias>
+  </provides>
+</component>
