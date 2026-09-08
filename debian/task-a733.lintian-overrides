@@ -1,3 +1,6 @@
-# /usr/bin/sddm-greeter-qt6 is a wapper for /usr/bin/sddm-greeter-qt6.bak, which is provided by sddm.
-# So we don't need to provide a manual page for it. 
+# These wrappers replace diverted binaries whose manual pages are provided by
+# the original packages.
 task-a733: no-manual-page
+# False positive: the maintainer scripts pass absolute paths to dpkg-divert;
+# they do not execute those paths as commands.
+task-a733: command-with-path-in-maintainer-script

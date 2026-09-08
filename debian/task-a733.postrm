@@ -7,7 +7,9 @@ set -e
 case $1 in
 remove)
 	# workaround command-with-path-in-maintainer-script for /usr/bin
-	conflicts="/usr/bin/sddm-greeter-qt6"
+	conflicts="/usr/bin/sddm-greeter-qt6
+	/usr/bin/plasma-discover
+	/usr/share/metainfo/libgstreamer-openmax-allwinner.metainfo.xml"
 	for i in $conflicts; do
 		dpkg-divert --package task-a733 --rename --remove "$i"
 	done
