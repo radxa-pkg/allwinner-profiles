@@ -1,3 +1,6 @@
 # We need task-a733-xorg to do some work to prioritize loading the so provided by xserver-xorg-img-bxm
 task-a733-xorg: package-modifies-ld.so-search-path
 task-a733-xorg: package-has-unnecessary-activation-of-ldconfig-trigger
+
+# sddm-greeter-qt6 is just a hack
+task-a733-xorg: no-manual-page
