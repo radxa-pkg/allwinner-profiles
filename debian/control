@@ -115,6 +115,14 @@ Depends: img-bxm-dkms,
 Description: Metapackage for A733 X.Org support
  This package provides Allwinner A733 X.Org support.
 
+Package: task-a733-powervr
+Architecture: all
+Priority: optional
+Depends: task-allwinner-xorg,
+         ${misc:Depends},
+Description: Metapackage for A733 PowerVR support
+ This package provides Allwinner A733 PowerVR support.
+
 Package: task-a733
 Architecture: all
 Priority: optional
