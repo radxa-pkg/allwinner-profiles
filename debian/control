@@ -106,7 +106,8 @@ Description: Metapackage for A733 X.Org support
 Package: task-a733-xorg
 Architecture: all
 Priority: optional
-Depends: libxcb-dri2-0,
+Depends: img-bxm-dkms,
+         libxcb-dri2-0,
          libssl1.1,
          xserver-xorg-img-bxm-1.21.1-2.deb,
          task-allwinner-xorg,
@@ -120,7 +121,6 @@ Priority: optional
 Depends: task-allwinner,
          task-a733-camera,
          task-a733-xorg,
-         img-bxm-dkms,
          ${misc:Depends},
 Recommends: task-a733-vpu
 Description: Metapackage for common A733 vendor packages
