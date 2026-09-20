@@ -1,3 +1,25 @@
+allwinner-profiles (0.2.10) unstable; urgency=medium
+
+  [ Feng Zhang ]
+  * fix: enable reliable Bluetooth file reception
+  * fix: use picom for A733 X.Org
+  * fix: restore wallpaper previews on A733 X.Org
+
+  [ ZHANG Yuntian ]
+  * fix: workaround sddm not working after log out issue
+  * docs: remove confusing comments
+  * fix: greeter hack is only needed with Allwinner stack
+  * fix: QSG_RHI_BACKEND is only for vendor driver
+  * fix: build
+  * fix: move vendor GPU driver under X.Org  metapackage
+  * feat: initial implementation of task-a733-powervr
+
+  [ Wang Yongsen ]
+  * Fix the slow reboot issue on A733
+  * Fix the issue of Discover opening abnormally of radxa-a733 debian13
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Sun, 20 Sep 2026 06:43:28 +0000
+
 allwinner-profiles (0.2.9) unstable; urgency=medium
 
   [ Feng Zhang ]
