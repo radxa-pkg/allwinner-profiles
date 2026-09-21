@@ -6,14 +6,18 @@ set -e
 
 case $1 in
 remove)
-	# workaround command-with-path-in-maintainer-script for /usr/bin
 	conflicts="
-/usr/lib/xorg/modules/libglamoregl.so /usr/bin/sddm-greeter-qt6
-/usr/lib/xorg/modules/drivers/modesetting_drv.so /usr/bin/Xorg
-/usr/share/wayland-sessions/plasma.desktop /usr/bin/plasma-discover
+/usr/lib/xorg/modules/libglamoregl.so /usr/bin/Xorg
+/usr/lib/xorg/modules/drivers/modesetting_drv.so
 "
 	for i in $conflicts; do
 		dpkg-divert --package xserver-xorg-img-bxm-1.21.1-2.deb --rename --remove "$i"
+	done
+	conflicts="
+/usr/share/wayland-sessions/plasma.desktop /usr/bin/plasma-discover  /usr/bin/sddm-greeter-qt6
+"
+	for i in $conflicts; do
+		dpkg-divert --package task-a733-xorg --rename --remove "$i"
 	done
 	;;
 esac
