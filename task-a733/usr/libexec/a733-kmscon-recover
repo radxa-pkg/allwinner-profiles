@@ -55,12 +55,15 @@ def master_state(pid, card):
     return next(iter(own), 'absent')
 
 
-def display_cards(pid):
+def display_cards(pid, connected_only=True):
     displays = {}
     seen = set()
     for status in sorted(DRM.glob('card*-*/status')):
         try:
-            if status.read_text().strip() != 'connected':
+            state = status.read_text().strip()
+            if state not in ('connected', 'disconnected'):
+                continue
+            if connected_only and state != 'connected':
                 continue
             card = int(status.parent.name.split('-', 1)[0][4:])
             if card in seen:
@@ -84,7 +87,8 @@ def recovery_target():
     pid = kmscon_pid()
     if pid is None:
         return None
-    for card, master in display_cards(pid).items():
+    # A non-master can retain stale disconnected status after a DP reconnect.
+    for card, master in display_cards(pid, connected_only=False).items():
         if master == 'n':
             return pid, card
     return None
@@ -205,6 +209,8 @@ def recover():
                     print(f'Recovered kmscon PID {pid} on tty1 via idle tty{spare}', flush=True)
                     return True
                 time.sleep(0.05)
+            if card not in display_cards(pid):
+                return False
             raise RuntimeError('kmscon did not regain DRM master')
 
 
