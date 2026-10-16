@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch A733 CLI display recovery requests
+Wants=a733-kmscon-hotplug.service
+
+[Path]
+PathExists=/run/a733-kmscon-hotplug
+PathExists=/run/a733-kmscon-started
+
+[Install]
+WantedBy=multi-user.target
