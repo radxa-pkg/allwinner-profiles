@@ -127,7 +127,9 @@ Description: Metapackage for A733 PowerVR support
 Package: task-a733
 Architecture: all
 Priority: optional
-Depends: task-allwinner,
+Depends: kmscon,
+         python3,
+         task-allwinner,
          task-a733-camera,
          task-a733-xorg,
          ${misc:Depends},

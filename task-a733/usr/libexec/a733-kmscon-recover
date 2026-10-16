@@ -1,0 +1,236 @@
+#!/usr/bin/python3
+"""Recover the foreground A733 CLI after kmscon loses DRM master."""
+
+import array
+import fcntl
+import os
+from pathlib import Path
+import signal
+import subprocess
+import time
+
+PENDING = Path('/run/a733-kmscon-hotplug')
+STARTED = Path('/run/a733-kmscon-started')
+DRM = Path('/sys/class/drm')
+DEBUG = Path('/sys/kernel/debug/dri')
+PROC = Path('/proc')
+ACTIVE = Path('/sys/class/tty/tty0/active')
+VT_OPENQRY, VT_GETMODE, VT_GETSTATE, VT_ACTIVATE = 0x5600, 0x5601, 0x5603, 0x5606
+KDGETMODE = 0x4B3B
+
+
+def unit_value(unit, prop):
+    return subprocess.check_output(
+        ['systemctl', 'show', '--property=' + prop, '--value'] + ([unit] if unit else []),
+        text=True, timeout=2).strip()
+
+
+def kmscon_pid():
+    if unit_value('kmsconvt@tty1.service', 'ActiveState') != 'active':
+        return None
+    pid = int(unit_value('kmsconvt@tty1.service', 'MainPID'))
+    if pid <= 1 or (PROC / str(pid) / 'exe').resolve(strict=True) != Path('/usr/bin/kmscon'):
+        return None
+    if b'--vt=tty1' not in (PROC / str(pid) / 'cmdline').read_bytes().split(b'\0'):
+        return None
+    return pid
+
+
+def master_state(pid, card):
+    # debugfs is specific to this BSP; unknown formats must not switch a user's VT.
+    lines = (DEBUG / str(card) / 'clients').read_text().splitlines()
+    if not lines or lines[0].split() != ['command', 'tgid', 'dev', 'master', 'a', 'uid', 'magic']:
+        return None
+    own = set()
+    for line in lines[1:]:
+        row = line.rsplit(None, 6)
+        if len(row) != 7 or row[3] not in ('y', 'n') or int(row[2]) != card:
+            return None
+        if row[3] == 'y' and int(row[1]) != pid:
+            return None
+        if int(row[1]) == pid:
+            own.add(row[3])
+    if len(own) > 1:
+        return None
+    return next(iter(own), 'absent')
+
+
+def display_cards(pid):
+    displays = {}
+    seen = set()
+    for status in sorted(DRM.glob('card*-*/status')):
+        try:
+            if status.read_text().strip() != 'connected':
+                continue
+            card = int(status.parent.name.split('-', 1)[0][4:])
+            if card in seen:
+                continue
+            seen.add(card)
+            if not (DEBUG / str(card) / 'name').read_text().startswith('sunxi-drm '):
+                continue
+            master = master_state(pid, card)
+        except (FileNotFoundError, NotADirectoryError):
+            continue
+        if master in ('y', 'n', 'absent'):
+            displays[card] = master
+    return displays
+
+
+def recovery_target():
+    if ACTIVE.read_text().strip() != 'tty1':
+        return None
+    if unit_value('display-manager.service', 'ActiveState') not in ('inactive', 'failed'):
+        return None
+    pid = kmscon_pid()
+    if pid is None:
+        return None
+    for card, master in display_cards(pid).items():
+        if master == 'n':
+            return pid, card
+    return None
+
+
+def open_vt(number):
+    return open('/dev/tty' + str(number), 'r+b', buffering=0,
+                opener=lambda path, flags: os.open(path, flags | os.O_NOCTTY | os.O_CLOEXEC))
+
+
+def active_vt(fd):
+    state = array.array('H', [0, 0, 0])
+    fcntl.ioctl(fd, VT_GETSTATE, state, True)
+    return state[0]
+
+
+def wait_vt(fd, source, target):
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        current = active_vt(fd)
+        if current == target:
+            return True
+        if current != source:
+            return False
+        time.sleep(0.02)
+    return False
+
+
+def has_session(vt):
+    tty_device = os.makedev(4, vt)
+    for stat in PROC.glob('[0-9]*/stat'):
+        try:
+            fields = stat.read_text().rsplit(')', 1)[1].split()
+        except FileNotFoundError:
+            continue
+        if int(fields[4]) == tty_device:
+            return True
+    return False
+
+
+def idle_vt(fd, vt):
+    mode = bytearray(8)
+    fcntl.ioctl(fd, VT_GETMODE, mode, True)
+    graphics = array.array('i', [0])
+    fcntl.ioctl(fd, KDGETMODE, graphics, True)
+    return mode[0] == 0 and graphics[0] == 0 and not has_session(vt)
+
+
+def handoff_target():
+    if unit_value(None, 'SystemState') not in ('running', 'degraded'):
+        return None
+    for unit in ('graphical.target', 'display-manager.service'):
+        if unit_value(unit, 'ActiveState') not in ('inactive', 'failed') or unit_value(unit, 'Job'):
+            return None
+    pid = kmscon_pid()
+    if pid is None:
+        return None
+    foreground = int(ACTIVE.read_text().strip().removeprefix('tty'))
+    if 1 < foreground <= 63:
+        return pid, foreground
+    return None
+
+
+def handoff():
+    # Only a console start can request this; an ordinary hotplug never changes the user's VT.
+    target = handoff_target()
+    if target is None:
+        return False
+    pid, previous = target
+    with open_vt(0) as console, open_vt(previous) as old:
+        # A sleeping kmscon may only open DRM after its VT becomes active.
+        deadline = time.monotonic() + 2
+        while not display_cards(pid):
+            if handoff_target() != target or time.monotonic() >= deadline:
+                return False
+            time.sleep(0.1)
+        if handoff_target() != target or active_vt(console) != previous:
+            return False
+        if not idle_vt(old, previous) or not display_cards(pid):
+            return False
+        fcntl.ioctl(console, VT_ACTIVATE, 1)
+        if not wait_vt(console, previous, 1) or kmscon_pid() != pid:
+            return False
+        print(f'Activated kmscon PID {pid} on tty1 after console start', flush=True)
+        return True
+
+
+def recover():
+    target = recovery_target()
+    if target is None:
+        return False
+    pid, card = target
+    with open_vt(0) as console:
+        candidate = array.array('i', [0])
+        fcntl.ioctl(console, VT_OPENQRY, candidate, True)
+        spare = candidate[0]
+        if not 1 < spare <= 63:
+            return False
+        with open_vt(spare) as idle:
+            if not idle_vt(idle, spare):
+                return False
+            if recovery_target() != target or active_vt(console) != 1:
+                return False
+            try:
+                fcntl.ioctl(console, VT_ACTIVATE, spare)
+                if not wait_vt(console, 1, spare):
+                    return False
+            finally:
+                # Do not override a user who switched to a third VT during recovery.
+                if active_vt(console) == spare and kmscon_pid() == pid:
+                    fcntl.ioctl(console, VT_ACTIVATE, 1)
+                    wait_vt(console, spare, 1)
+            deadline = time.monotonic() + 2
+            while active_vt(console) == 1 and time.monotonic() < deadline:
+                if kmscon_pid() != pid:
+                    return False
+                if master_state(pid, card) == 'y':
+                    print(f'Recovered kmscon PID {pid} on tty1 via idle tty{spare}', flush=True)
+                    return True
+                time.sleep(0.05)
+            raise RuntimeError('kmscon did not regain DRM master')
+
+
+def stop(signum, frame):
+    raise InterruptedError('recovery service stopped')
+
+
+def main():
+    signal.signal(signal.SIGTERM, stop)
+    try:
+        try:
+            STARTED.unlink()
+        except FileNotFoundError:
+            started = False
+        else:
+            started = True
+        PENDING.unlink(missing_ok=True)
+        time.sleep(0.5)
+        if started:
+            handoff()
+        recover()
+    except (OSError, ValueError, IndexError, RuntimeError, subprocess.SubprocessError) as error:
+        print(f'CLI display recovery skipped or failed: {error}', flush=True)
+        return 1
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
