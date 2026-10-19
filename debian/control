@@ -107,9 +107,11 @@ Package: task-a733-xorg
 Architecture: all
 Priority: optional
 Depends: img-bxm-dkms,
+         kmscon,
          libxcb-dri2-0,
          libssl1.1,
          picom,
+         python3,
          xserver-xorg-img-bxm-1.21.1-2.deb,
          task-allwinner-xorg,
          ${misc:Depends},
@@ -127,9 +129,7 @@ Description: Metapackage for A733 PowerVR support
 Package: task-a733
 Architecture: all
 Priority: optional
-Depends: kmscon,
-         python3,
-         task-allwinner,
+Depends: task-allwinner,
          task-a733-camera,
          task-a733-xorg,
          ${misc:Depends},
