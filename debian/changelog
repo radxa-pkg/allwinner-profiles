@@ -1,3 +1,15 @@
+allwinner-profiles (0.2.12) unstable; urgency=medium
+
+  [ Feng Zhang ]
+  * fix(a733): recover the CLI display after DRM hotplug
+  * fix(a733): recover consoles with stale connector status
+  * fix(a733): ship CLI recovery in task-a733-xorg
+
+  [ Wang Yongsen ]
+  * fix(a733): load Raspberry Pi Touch Display 2 MCU before GPU
+
+ -- "Radxa Computer (Shenzhen) Co., Ltd." <dev@radxa.com>  Tue, 03 Nov 2026 04:06:56 +0000
+
 allwinner-profiles (0.2.11) unstable; urgency=medium
 
   [ ZHANG Yuntian ]
