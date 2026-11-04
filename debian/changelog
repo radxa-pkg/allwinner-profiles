@@ -1,3 +1,10 @@
+allwinner-profiles (0.2.13) unstable; urgency=medium
+
+  [ Feng Zhang ]
+  * fix(a733): recommend kmscon for X.Org support
+
+ -- "Radxa Computer (Shenzhen) Co., Ltd." <dev@radxa.com>  Wed, 04 Nov 2026 06:11:45 +0000
+
 allwinner-profiles (0.2.12) unstable; urgency=medium
 
   [ Feng Zhang ]
