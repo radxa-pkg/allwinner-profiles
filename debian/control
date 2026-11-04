@@ -107,7 +107,6 @@ Package: task-a733-xorg
 Architecture: all
 Priority: optional
 Depends: img-bxm-dkms,
-         kmscon,
          libxcb-dri2-0,
          libssl1.1,
          picom,
@@ -115,6 +114,7 @@ Depends: img-bxm-dkms,
          xserver-xorg-img-bxm-1.21.1-2.deb,
          task-allwinner-xorg,
          ${misc:Depends},
+Recommends: kmscon
 Description: Metapackage for A733 X.Org support
  This package provides Allwinner A733 X.Org support.
 
