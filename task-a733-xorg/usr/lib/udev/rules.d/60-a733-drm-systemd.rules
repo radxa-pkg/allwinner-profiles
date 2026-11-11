@@ -1,0 +1,2 @@
+# Expose DRM primary devices to systemd for display-manager ordering.
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ENV{DEVTYPE}=="drm_minor", TAG+="systemd"
