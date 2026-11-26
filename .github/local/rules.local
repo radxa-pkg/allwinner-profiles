@@ -1,0 +1,2 @@
+override_dh_installudev:
+	dh_installudev -ptask-a733 --name=pwm-fan-enable --priority=90
