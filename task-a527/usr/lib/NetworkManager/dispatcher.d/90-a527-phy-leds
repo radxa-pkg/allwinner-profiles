@@ -1,0 +1,6 @@
+#!/bin/sh
+case "${2:-}" in
+    up|reapply)
+        exec /usr/libexec/a527-phy-leds
+        ;;
+esac

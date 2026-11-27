@@ -1,2 +1,3 @@
 override_dh_installudev:
 	dh_installudev -ptask-a733 --name=pwm-fan-enable --priority=90
+	dh_installudev -ptask-a527 --name=phy-leds --priority=90

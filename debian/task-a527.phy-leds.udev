@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="leds", KERNEL=="*:green:lan", RUN+="/usr/libexec/a527-phy-leds"
