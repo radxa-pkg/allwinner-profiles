@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eu
+
+compatible=/sys/firmware/devicetree/base/compatible
+[ -r "$compatible" ] || exit 0
+tr '\000' '\n' < "$compatible" | grep -Fxq 'radxa,cubie-a5e' || exit 0
+
+for netdev in /sys/class/net/*; do
+    phy="$netdev/phydev"
+    [ -r "$phy/phy_id" ] || continue
+    [ "$(cat "$phy/phy_id")" = 0x001cc916 ] || continue
+
+    for led in "$phy"/leds/*:green:lan; do
+        [ -e "$led/trigger" ] || continue
+        /sbin/modprobe ledtrig-netdev
+        case "$(cat "$led/trigger")" in
+            *'[netdev]'*) ;;
+            *) printf '%s\n' netdev > "$led/trigger" ;;
+        esac
+
+        # The PHY may only become attached when the interface is opened.
+        printf '%s\n' "${netdev##*/}" > "$led/device_name"
+        for rule in link rx tx half_duplex full_duplex; do
+            printf '0\n' > "$led/$rule"
+        done
+        for rule in link_10 link_100 link_1000; do
+            printf '1\n' > "$led/$rule"
+        done
+
+        if [ "$(cat "$led/offloaded")" != 1 ]; then
+            echo "Hardware LED control unavailable: $led" >&2
+            exit 1
+        fi
+    done
+done
